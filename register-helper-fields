@@ -1,0 +1,292 @@
+<?php
+/*
+Plugin Name: Register Helper Example
+Plugin URI: http://www.paidmembershipspro.com/wp/pmpro-customizations/
+Description: Register Helper Initialization Example
+Version: .2
+Author: Stranger Studios
+Author URI: http://www.strangerstudios.com
+*/
+//we have to put everything in a function called on init, so we are sure Register Helper is loaded
+function my_pmprorh_init()
+{
+	//don't break if Register Helper is not loaded
+	if(!function_exists( 'pmprorh_add_registration_field' )) {
+		return false;
+	}
+	
+	//define the checkout boxes
+	pmprorh_add_checkout_box("your_location", "Your Location");
+	pmprorh_add_checkout_box("your_profile", "Your Profile");
+	
+	
+	
+	//define the fields
+	$fields = array();
+	$fields[] = new PMProRH_Field(
+		'suburb',              	// input name, will also be used as meta key
+		'text',							// type of field
+		array(
+		    'buddypress' => 'Suburb',       // XProfile Field Name <-- !!!
+		    'label'		=> 'Suburb',
+		     'profile'	=> true,			
+	    	 'required'	=> true,		
+			 'levels'   => array(1,2,3),
+		)	    
+	);
+	
+			$fields[] = new PMProRH_Field(
+		'state',              	// input name, will also be used as meta key
+		'select',							// type of field
+		array(
+		    'buddypress' => 'State',       // XProfile Field Name <-- !!!
+		    'label'		=> 'State',
+		    'profile' => true,
+	    	 'required'	=> true,		
+			 'levels'   => array(1,2,3),
+			   'options'  => array(	
+			 '' => '- Choose a State -',
+				'queensland' => 'Queensland',
+				'victoria'	=> 'Victoria',
+				'newsouthwales'	=> 'New South Wales',
+				'westernaustralia'	=> 'Western Australia',
+				'southaustralia'	=> 'South Australia',
+				'northernterritory'	=> 'Northern Territory',
+				'tasmania'	=> 'tasmania',
+			    )
+			    )	    
+	);
+	
+		foreach($fields as $field)
+		pmprorh_add_registration_field(
+	    'your_location',				// location on checkout page
+		$field						// PMProRH_Field object
+		);
+		
+	$fields = array();	
+	$fields[] = new PMProRH_Field(
+		'practicename',						// input name, will also be used as meta key
+		'text',							// type of field
+		array(
+		    'buddypress' => 'Practice Name',       // XProfile Field Name <-- !!!
+			'label'		=> 'Practice Name',			// custom field label
+			'size'		=> 60,				// input size
+			'class'		=> 'practicename',			// custom class
+			'required'	=> true,			// make this field required
+			'levels'		=> array(2),		// only level 2 should have the practice field
+			'hint'		=> 'Please note: The practice name will not be shown to other users'
+		)
+	);
+	
+	$fields[] = new PMProRH_Field(
+		'registrationlevel',              	// input name, will also be used as meta key
+		'select',							// type of field
+		array(
+		    'buddypress' => 'AHPRA Registration Level',       // XProfile Field Name <-- !!!
+		    'label'		=> 'AHPRA Registration Level',
+		     'profile'	=> true,			
+	    	 'required'	=> true,		
+			 'levels'   => array(1,3),
+		     'options'  => array(				
+				'eligibleforlimited'	=> 'Eligible For or Holds Limited Registration',
+				'eligibleforprovisional'	=> 'Eligible For or Holds Provisional Registration',
+			    )
+		)	    
+	);
+	
+	$fields[] = new PMProRH_Field(
+        "racgpresults",
+        "file",
+        array(
+		"depends"=>array(array(
+		        'id' => "registrationlevel", 'value' => "eligibleforlimited")),
+		"label"=>"Please upload evidence of your RACGP results",
+        )
+        );
+        
+	$fields[] = new PMProRH_Field(
+        "amcmcq",
+        "file",
+        array(
+		"depends"=>array(array('id' => "registrationlevel", 'value' => "eligibleforlimited")),
+		"label"=>"Please upload evidence of your AMC MCQ",
+        ));
+        
+        $fields[] = new PMProRH_Field(
+        "englishlanguage",
+        "file",
+        array(
+		"depends"=>array(array('id' => "registrationlevel", 'value' => "eligibleforlimited")),
+		"label"=>"Please upload evidence of your English Language Test",
+        ));
+        
+        $fields[] = new PMProRH_Field(
+        "amcorcaeevidence",
+        "select",
+        array(
+		        "depends"=>array(array(
+		        'id' => "registrationlevel", 'value' => "eligibleforprovisional")),
+		        'showrequired' => true,
+		        "label"=>"Please upload evidence of one of the following:",
+		        'options'  => array(				
+				'amccertificate'	=> 'AMC Certificate',
+				'competentauthority'	=> 'Competent Authority Exams',
+				)
+        ));
+        
+                $fields[] = new PMProRH_Field(
+        "competentauthexams",
+        "text",
+        array(
+		"depends"=>array(array(
+		'id' => "amcorcaeevidence", 'value' => "competentauthority")),
+		"label"=>"Which Competent Authority Exams have you taken and have you undertaken any other additional requirements?",
+        ));
+        
+        $fields[] = new PMProRH_Field(
+        "amcorcaeevidencefile",
+        "file",
+        array(
+		"depends"=>array(array(
+		    'id' => "registrationlevel", 'value' => "eligibleforprovisional", )),
+		"label"=>"Upload file:",
+        ));
+        
+        $fields[] = new PMProRH_Field(
+        "englishlanguage2",
+        "file",
+        array(
+		"depends"=>array(array('id' => "registrationlevel", 'value' => "eligibleforprovisional")),
+		"label"=>"Please upload evidence of your English Language Test",
+        ));
+        
+	$fields[] = new PMProRH_Field(
+		'experience',              	// input name, will also be used as meta key
+		'select',							// type of field
+		array(
+		    'buddypress' => 'Years of GP Experience',       // XProfile Field Name <-- !!!
+		    'label'		=> 'Years of GP Experience',
+		     'profile'	=> true,			
+	    	 'required'	=> true,		
+			 'levels'   => array(1,3),
+		     'options'  => array(				
+				'noexperience' => 'No Experience',
+				'Lessthan1year'	=> '&lt;1 Year',
+				'1to2years'	=> '1-2 Years',
+				'2to3years'	=> '2-3 Years',
+				'3to4years'	=> '3-4 Years',
+				'4to5years'	=> '4-5 Years',
+				'5to6years'	=> '5-6 Years',
+				'morethansixyears' => '&gt;6 Years',
+			    )
+		)	    
+	);
+	
+	$fields[] = new PMProRH_Field(
+		'timeassessment',              	// input name, will also be used as meta key
+		'select',							// type of field
+		array(
+		    'buddypress' => 'Time Assessment',       // XProfile Field Name <-- !!!
+		    'label'		=> 'Have you had your GP experience assessed?',
+		     'profile'	=> true,			
+	    	 'required'	=> true,		
+			 'levels'   => array(1,3),
+		     'options'  => array(				
+				'yes'	=> 'Yes',
+				'no'	=> 'No',
+			    )
+		)	    
+	);
+	
+		$fields[] = new PMProRH_Field(
+		'interests',              	// input name, will also be used as meta key
+		'select2',							// type of field
+		array(
+		    'label'		=> 'Interests',
+		     'profile'	=> 'true',			
+			 'levels'   => array(1,3),
+		     'options'  => array(				
+				'womenshealth'	=> 'Womens Health',
+				'menshealth'	=> 'Mens Health',
+				'immunisation'	=> 'Immunisation',
+				'agedcare'	=> 'Aged Care',
+				'pchildandfamily'	=> 'Preventative Child & Family care',
+				'chronicdisease'	=> 'Chronic Disease',
+				'familyplanning'	=> 'Family Planning',
+			    )
+			)    
+		);
+
+	$fields[] = new PMProRH_Field(
+		'supervise',						// input name, will also be used as meta key
+		'select',							// type of field
+		array(
+		    'buddypress' => 'Willing To Supervise?',       // XProfile Field Name <-- !!!
+			'label'		=> 'Are you willing to supervise a GP?',			// custom field label
+			'class'		=> 'supervise',			// custom class
+			'profile'	=> true,			// show in user profile
+			'required'	=> true,			// make this field required
+			'levels'		=> array(2),		// only level 2 should have the practice field
+			'options'		=> array(				
+				'yes' => 'Yes',
+				'no'	=> 'No',
+            )
+		)
+	);
+	
+	        $fields[] = new PMProRH_Field(
+        "doyouhavegps",
+        "select",
+        array(
+		"depends"=>array(array('id' => "supervise", 'value' => "yes")),
+		"levels"  => array(2),
+		'required'	=> true,
+		"label"=>"Do you have 2 VR GP's that have been practicing for a minimum of 3 years?",
+		'options'		=> array(				
+				'yes' => 'Yes',
+				'no'	=> 'No',)
+        ));
+        
+        $fields[] = new PMProRH_Field(
+        "gpsuperviseothers",
+        "select",
+        array(
+		"depends"=>array(array('id' => "supervise", 'value' => "yes")),
+		"levels"  => array(2),
+		'required'	=> true,
+		"label"=>"Does your GP currently supervise others? If so, how many?",
+		"hint" =>"Select 0 if they do not currently supervise any",
+		'options'		=> array(
+		        'none'	=> '0',
+				'one' => '1',
+				'two'	=> '2',
+				'three'	=> '3',
+				'four'	=> '4',)
+        ));
+	
+
+	//add the fields into a new checkout_boxes are of the checkout page
+	foreach($fields as $field)
+		pmprorh_add_registration_field(
+			'your_profile',				// location on checkout page
+			$field						// PMProRH_Field object
+		);
+	//that's it. see the PMPro Register Helper readme for more information and examples.
+}
+add_action( 'init', 'my_pmprorh_init' );
+
+function my_pmpro_checkout_level($level)
+{
+	
+  if ( ! empty( $_REQUEST['registrationlevel']) && $level->id == '1' ) {
+	  if (( $_REQUEST['registrationlevel'] == 'eligibleforlimited' && $_REQUEST['experience'] != 'morethansixyears') || ($_REQUEST['registrationlevel'] == 'eligibleforlimited' && $_REQUEST['timeassessment'] == 'no')) {
+	  	$level->id = '3';
+	  } elseif ( $_REQUEST['registrationlevel'] == 'eligibleforprovisional' && $_REQUEST['experience'] == 'noexperience') {
+	  	$level->id = '3';
+	  }
+	  
+  }
+ 
+  return $level;
+}
+add_filter("pmpro_checkout_level", "my_pmpro_checkout_level");
